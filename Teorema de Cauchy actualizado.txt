@@ -1,0 +1,77 @@
+import Mathlib.Tactic
+
+--Sea G un grupo finito
+variable (G : Type) [Group G] [Fintype G]
+--Sea p un entero primo
+variable (p : ℤ) (hp : Prime p)
+
+--Definimos el teorema de Cauchy
+--Sea G un cuerpo fnito y p un primo tal que p | |G|, entonces, G tiene un elemento de orden p
+
+--Esta es la proposicion clave que usa el teorema para demostrar que el cardinal de las orbitas de C sobre S divide a p
+theorem proposition2_1 (G S : Type) [Group G] [Fintype G] [MulAction G S] (s:S):  
+     (MulAction.stabilizer G s).index = Nat.card (MulAction.orbit G s) := by sorry
+
+def rotateVec (c : C) (s : S) : S := sorry --Aqui definimos la funcion de accion de C sobre S
+
+instance (C S : Type) [Group C] [Fintype C] [IsCyclic C] [Fintype S]: MulAction C S where --Aqui la accion en cuestion para luego poder usarla las orbitas en la demostracion
+  smul := rotateVec
+  one_smul := sorry
+  mul_smul := sorry
+
+theorem cauchy_theorem (p : ℤ) (hp : Prime p) (h_div : p.natAbs ∣ Fintype.card G) : 
+  ∃ g : G, orderOf g = p.natAbs := by
+   --Paso 1: Construimos el producto de G y tomamos S < G
+   -- 1. Definimos n como el natural p.natAbs para simplificar tenemos que mostrar que el valor absoluto de p primo es un natural primo
+  let n := p.natAbs
+  letI : Nat.Prime n := Int.prime_iff_natAbs_prime.mp hp
+
+  -- 2. Definimos el tipo de las secuencias G^n
+  let Vec := Fin n → G
+  --letI : Group Vec := Pi.group Aquí lo que indicamos, es que un producto de grupos es un grupo
+  letI : Fintype Vec := Pi.instFintype --Aqui lo que indicamos es que un grupo de fintypes es fintype
+  -- 3. Definimos S 
+  let vector_unitario : Vec := fun _ => 1  --Definimos el vector (1,1,1,.....,1)
+
+  let S := { s : Vec // (List.ofFn s).prod = 1 ∧ s ≠ vector_unitario}
+
+  haveI : Fintype S := by exact Fintype.ofFinite S --Tenemos que mostrar que S y T son finitos para poder usar la funcion cardinal
+
+  let T := { t : Vec // (List.ofFn t).prod = 1}
+  have : Fintype T := by exact Fintype.ofFinite T
+
+  --Paso 2: Tomamos un s en S y mostramos que p no divide a |S|
+  -- Hay que mostrar que |S| = |G|^p-1 - 1
+  haveI h_card_T : Fintype.card T = (Fintype.card G)^(n - 1) := by
+    sorry
+  haveI h_card_s : Fintype.card S = (Fintype.card G)^(n - 1) -1  := by
+    sorry
+  have h1 : ¬ (p.natAbs : ℕ) ∣ Fintype.card S := by
+    sorry
+  
+  --Paso 3: Definimos el grupo ciclico C = <z>
+  --Tenemos que definir la accion z sobre S, lo comento porque me da problemas para seguir
+  /-def σ : Equiv.Perm (Fin n) := finRotate n
+  def z (s : S) : S := sorry-/
+  
+  let C := Multiplicative (ZMod p.natAbs) --Aqui pongo que el grupo es multiplicativo para poder definirlo como ciclico con IsCyclic
+  haveI hC_finito : Fintype C := by sorry
+  haveI hC_ciclico : IsCyclic C := by sorry
+
+  --Paso 4: Usamos la proposicion 2.1 para mostrar que |Orb_C(s)| | p
+
+
+  have hOfinito : ∀ s:S, Fintype (MulAction.orbit C s) := by exact fun s => Fintype.ofFinite ↑(MulAction.orbit C s)
+  --Con hOfinito Lean ya sabe que la orbita Cs es finita
+  have hipotesis_p_div : ∀ s:S, Fintype.card (MulAction.orbit C s) ∣  p.natAbs := by sorry
+  
+  --Paso 5: Mostramos que existe Orb_C(s) tal que |Orb_C(s)| = 1
+
+  have h_p_o_1 : ∀ s:S, Fintype.card (MulAction.orbit C s) = p.natAbs ∨ Fintype.card (MulAction.orbit C s) = 1 := by sorry
+
+  have h_existe_card_1 : ∃ s:S, Fintype.card (MulAction.orbit C s) = 1 := by sorry --Aqui hay que desarrollar un razonamiento por absurdo
+
+  --Paso 6 Final: Mostramos que como ∃ s:S tal que |Orb_C(s)| = 1, entonces existe x ∈ G tal que x^p = 1
+  have hfinal: ∃ g:G, orderOf g = p.natAbs := by sorry
+  exact hfinal
+
