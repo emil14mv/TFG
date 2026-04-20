@@ -1,0 +1,38 @@
+import Mathlib.Tactic
+
+--Vamos a demostrar el primer teorema de Sylow que dice:
+
+--Sea G un grupo finito y p∈ℤ primo, entonces, G tiene un p-subgrupo de Syllow, es decir un P < G tal que  |P| = pᵏ y pᵏ|| |G|
+
+
+--theorem primer_teorema_sylow (G : Type) [Group G] [Fintype G] (p:ℕ) (hp : Prime p) :  := by sorry
+
+--Se trata de una demostración por inducción
+
+
+theorem primer_teorema_sylow (G : Type) [Group G] [Finite G] (p : ℕ) [Fact p.Prime] : 
+  ∃ P : Sylow p G, True := by
+  let n := Nat.card G
+  -- Inducción fuerte sobre n
+  -- El Nat.strongRecOn lo que nos dice es que la hipotesis de induccion sea cierta para todo n e inferior de n no solo para n
+  -- El generalizing G hace que la hipotesis sirva para todo grupo G finito, no solo para un G finito particular
+  induction n using Nat.strongRecOn generalizing G with
+  | ind n ih => 
+    -- ih: ∀ (m : ℕ), m < n → ∀ (G : Type) [Group G] [Finite G], Nat.card G = m → ∃ P : Sylow p G, True
+    
+    by_cases h_div : ¬(p ∣ n) ∨  (n ≤ 1)
+    · -- Este sería el caso baso en el que si p no divide a |G|, entonces el p-subgrupo de Syllow es el grupo trivial
+      simp
+    · -- Caso inductivo real
+      
+      by_cases h_no_divide : ∃ (H : Subgroup G), H ≠ ⊤ ∧ ¬(p ∣ H.index)
+      --Aqui dividimos la parte inductiva en dos partes
+      · --1 ∃ H ≤ G | H ≠ G y  p ∤ [G:H]
+        obtain ⟨H, Hh_top, h_p_index⟩ := h_no_divide
+        have h1: Fintype H := by exact Fintype.ofFinite ↥H
+        have h3: Nat.card H < n := by sorry
+        have h2: ∃ P : Sylow p H, True := by sorry
+        obtain⟨P, _⟩ := h2 
+        sorry
+      · --2 ¬(∃ H ≤ G | H ≠ G y  p ∤ [G:H])
+        sorry
