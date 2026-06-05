@@ -112,7 +112,8 @@ theorem cauchy_theorem (p : ℤ) (G : Type) [Group G] [Fintype G] (hp : Prime p)
       dsimp only --Esto simplifica lo que tenemos que demostrar en el compilador, ahora el objetivo es claro y es el que hemos enunciado
       constructor --Aqui dividimos los dos objetivos que queremos demostrar
       have h_listas : List.ofFn (fun i => vector (i + c_fin c)) = (List.ofFn vector).rotate (c_fin c).val := by
-        sorry --Esto lo necesito para poder usar la funcion "List.prod_rotate_eq_one_of_prod_eq_one propiedad_1 ↑(c_fin c)""
+        sorry
+         --Esto lo necesito para poder usar la funcion "List.prod_rotate_eq_one_of_prod_eq_one propiedad_1 ↑(c_fin c)""
       rw[h_listas]
       exact List.prod_rotate_eq_one_of_prod_eq_one propiedad_1 ↑(c_fin c)
       intro h_absurdo
@@ -129,10 +130,6 @@ theorem cauchy_theorem (p : ℤ) (G : Type) [Group G] [Fintype G] (hp : Prime p)
 
     --Aqui tenemos que mostrar que la accion del elemento neutro no altera el vector
     one_smul := by
-      /-intro ⟨vector, propiedad_1, propiedad_2⟩
-      have h : (fun i => vector (i + 0)) = vector := by
-        simp 
-      have h2 :-/
       intro s
       ext i
       change s.val (i + c_fin 1) = s.val i
@@ -151,10 +148,10 @@ theorem cauchy_theorem (p : ℤ) (G : Type) [Group G] [Fintype G] (hp : Prime p)
       have h :  c_fin (a*b) = c_fin a + c_fin b := by
         apply Fin.ext
         change (Multiplicative.toAdd (a*b)).val = ((Multiplicative.toAdd a).val +(Multiplicative.toAdd b).val)%n
-        sorry
-      sorry
-        
-      
+        exact ZMod.val_add (Multiplicative.toAdd a) (Multiplicative.toAdd b)
+      rw[h]
+      have h1 : i + (c_fin a + c_fin b) = i + c_fin a + c_fin b := by exact Eq.symm (add_assoc i (c_fin a) (c_fin b))
+      rw[h1]
   }
 
 
@@ -162,13 +159,15 @@ theorem cauchy_theorem (p : ℤ) (G : Type) [Group G] [Fintype G] (hp : Prime p)
 
   --Paso 4: Usamos la proposicion 2.1 para mostrar que |Orb_C(s)| | p
 
+  --let estabilizador : MulAction.stabilizer C S
+
 
   have hOfinito : ∀ s:S, Fintype (MulAction.orbit C s) := by exact fun s => Fintype.ofFinite ↑(MulAction.orbit C s)
   --Con hOfinito Lean ya sabe que la orbita Cs es finita
   
 
-  have hipotesis_p_div (s:S): Fintype.card (MulAction.orbit C s) ∣  n := by sorry
-    --exact card_orbita C S n n_prime n_no_zero  --Aqui podemos aplicar la proposicion que hemos definido pero pero persiste el problema en el que no he definido la accion del grupo
+  have hipotesis_p_div (s:S): Fintype.card (MulAction.orbit C s) ∣  n := by --exact card_orbita C S n n_prime n_no_zero
+       --Aqui podemos aplicar la proposicion que hemos definido pero pero persiste el problema en el que no he definido la accion del grupo
   
   --Paso 5: Mostramos que existe Orb_C(s) tal que |Orb_C(s)| = 1
 
